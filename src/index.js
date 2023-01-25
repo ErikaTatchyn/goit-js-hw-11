@@ -18,7 +18,7 @@ const onSearchFormSubmit = async event => {
     const { data } = response;
     if (data.hits.length === 0) {
       Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again. '
+        'Sorry, there are no images matching your search query. Please try again.'
       );
 
       event.target.reset();
