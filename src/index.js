@@ -12,10 +12,14 @@ const onSearchFormSubmit = async event => {
   event.preventDefault();
   pixabayApi.q = event.target.elements.searchQuery.value.trim();
   pixabayApi.page = 1;
+  if (pixabayApi.q === '') {
+    return;
+  }
 
   try {
     const response = await pixabayApi.fetchPhotosByQuery();
     const { data } = response;
+
     if (data.hits.length === 0) {
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
@@ -30,7 +34,7 @@ const onSearchFormSubmit = async event => {
       return;
     }
 
-    if (data.total_pages > 1) {
+    if (data.totalHits / 40 > 1) {
       loadMoreBtnEl.classList.remove('is-hidden');
     }
 
@@ -52,10 +56,10 @@ const onLoadMoreBtnClick = async event => {
       createGalleryCards(data.hits)
     );
 
-    if (pixabayApi.page === data.total / 40) {
+    if (pixabayApi.page === Math.ceil(data.totalHits / 40)) {
       loadMoreBtnEl.classList.add('is-hidden');
       Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
+        'We are sorry, but you have reached the end of search results.'
       );
     }
   } catch (err) {
